@@ -32,10 +32,11 @@
                 @Html.DisplayFor(modelItem => item.DefaultDays)
             </td>
             <td>
+                <button data-id="@item.Id" class="btn btn-primary allocateBtn" type="button"> Allocate Leave </button>
                 <a class="btn btn-warning" asp-action="Edit" asp-route-id="@item.Id" ><i class="fas fa-pencil-alt"></i></a> |
                 <a class="btn btn-info" asp-action="Details" asp-route-id="@item.Id"><i class="fas fa-info-circle"></i></a> |
                 @*<a asp-action="Delete" class="btn btn-danger" asp-route-id="@item.Id">Delete</a>*@
-                <button data-id1="@item.Id" class="btn btn-danger deleteBtn" type="button"><i class="far fa-trash-alt"></i></button>
+                <button data-id="@item.Id" class="btn btn-danger deleteBtn" type="button"><i class="far fa-trash-alt"></i></button>
             </td>
         </tr>
 }
@@ -44,10 +45,13 @@
  <form id="deleteForm" asp-action="Delete">
         <input type="hidden" id="leaveTypeId" name="Id"/>
     </form>
+     <form id="allocationForm" asp-action="AllocateLeave">
+        <input type="hidden" id="leaveTypeIdAllocate" name="Id"/>
+    </form>
 @section Scripts{
     <script>
         $(function(){
-            $('.table').DataTable();
+            
             $('.deleteBtn').click(function(e){
                 swal({
                     title:"Are you sure",
@@ -58,9 +62,27 @@
                 }).then((confirm) =>{
                     if(confirm){
                         var btn=$(this);
-                        var id=btn.data("id1");
+                        var id=btn.data("id");
                         $('#leaveTypeId').val(id);
                          $('#deleteForm').submit();
+                       // alert('You said Yes');
+                    }
+                });
+            });
+
+            $('.allocateBtn').click(function(e){
+                swal({
+                    title:"Are you sure",
+                    text:"Are you sure you want to allocate this leave to all employees?",
+                    icon:"warning",
+                    buttons:true,
+                    dangerMode:true
+                }).then((confirm) =>{
+                    if(confirm){
+                        var btn=$(this);
+                        var id=btn.data("id");
+                        $('#leaveTypeIdAllocate').val(id);
+                         $('#allocationForm').submit();
                        // alert('You said Yes');
                     }
                 });
