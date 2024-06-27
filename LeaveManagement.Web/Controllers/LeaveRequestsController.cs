@@ -18,12 +18,17 @@ namespace LeaveManagement.Web.Controllers
     public class LeaveRequestsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<LeaveRequestsController> logger;
         private readonly ILeaveRequestRepository leaveRequestRepository;
         private readonly ILeaveTypeRepository leaveTypeRepository;
 
-        public LeaveRequestsController(ApplicationDbContext context, ILeaveRequestRepository leaveRequestRepository, ILeaveTypeRepository leaveTypeRepository)
+        public LeaveRequestsController(ApplicationDbContext context, 
+            ILogger<LeaveRequestsController> logger,
+            ILeaveRequestRepository leaveRequestRepository, 
+            ILeaveTypeRepository leaveTypeRepository)
         {
             _context = context;
+            this.logger = logger;
             this.leaveRequestRepository = leaveRequestRepository;
             this.leaveTypeRepository = leaveTypeRepository;
         }
@@ -50,6 +55,7 @@ namespace LeaveManagement.Web.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Error on Cancelling Leave Request");
 
                 throw;
             }
@@ -76,9 +82,9 @@ namespace LeaveManagement.Web.Controllers
                 await leaveRequestRepository.ChangeApprovalStatus(id, approved);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                logger.LogError(ex, "Error on Approving Request");
                 throw;
             }
             return RedirectToAction(nameof(Index));
@@ -118,6 +124,7 @@ namespace LeaveManagement.Web.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, "Error on Creating Request");
                 ModelState.AddModelError(String.Empty, "An error has occured: Please try again later");
             }
             model.LeaveTypes = new SelectList(await leaveTypeRepository.GetAllAsync(), "Id", "Name", model.LeaveTypeId);
